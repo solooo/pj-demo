@@ -17,6 +17,7 @@
     <modules>
         <module>rabbitmq</module>
         <module>other</module>
+        <module>restful</module>
     </modules>
 
     <dependencies>
