@@ -38,4 +38,10 @@ public class MyProducer {
 
         System.out.println("发送：" + obj);
     }
+
+    public void sendMsgToTopic(String topicName, Object msgObj) {
+        rabbitTemplate.convertAndSend(topicName, msgObj);
+        System.out.println("发送：" + msgObj);
+    }
+
 }
