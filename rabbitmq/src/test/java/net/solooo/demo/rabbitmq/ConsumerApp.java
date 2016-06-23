@@ -21,4 +21,6 @@ public class ConsumerApp {
         new ClassPathXmlApplicationContext("classpath*:spring-rabbitmq-consumer.xml");
 
     }
+
+
 }
