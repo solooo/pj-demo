@@ -1,7 +1,5 @@
 package net.solooo.demo.springboot.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,14 +18,13 @@ import java.util.Map;
  * his1:
  */
 @RestController
-@RequestMapping(value = "/hello", produces = {"application/json;charset=UTF-8"})
+@RequestMapping(value = "/hello")
 public class HelloController {
 
     @RequestMapping(value = "/say/{name}", method = RequestMethod.GET)
-    public String say(@PathVariable String name) {
-        String tmp = StringUtils.isBlank(name) ? "Eric" : name;
+    public Map<String, Object> say(@PathVariable String name) {
         Map<String, Object> map = new HashMap<>();
-        map.put("say", "Hello, " + tmp);
-        return JSONObject.toJSONString(map);
+        map.put("say", "Hello, " + name);
+        return map;
     }
 }
