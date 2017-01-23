@@ -14,7 +14,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Author:裴健(peij@htdatacloud.com)
  * Date:2016/5/25
  * History:
- * his1:
+ * his1:+
+ *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:spring-rabbitmq-producer.xml")
