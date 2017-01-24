@@ -1,5 +1,7 @@
 package net.solooo.demo.springboot.controller;
 
+import net.solooo.demo.springboot.service.HelloService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,13 +20,17 @@ import java.util.Map;
  * his1:
  */
 @RestController
-@RequestMapping(value = "/hello")
+@RequestMapping("/hello")
 public class HelloController {
+
+    @Autowired
+    private HelloService helloService;
 
     @RequestMapping(value = "/say/{name}", method = RequestMethod.GET)
     public Map<String, Object> say(@PathVariable String name) {
         Map<String, Object> map = new HashMap<>();
-        map.put("say", "Hello, " + name);
+        map.put("name", helloService.getName());
+        map.put("param", name);
         return map;
     }
 }
