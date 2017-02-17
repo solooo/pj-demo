@@ -10,4 +10,27 @@ package net.solooo.demo.other.exception;
  * his1:
  */
 public class ExceptionTest {
+    public void thex() throws Exception {
+        Exception ex = null;
+        try {
+            System.out.println("step 1...");
+            throw new Exception("custom exception");
+        } catch (Exception e) {
+            ex = e;
+        } finally {
+            System.out.println("step 2...");
+        }
+        if (ex != null) {
+            throw new Exception(ex);
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            new ExceptionTest().thex();
+        } catch (Exception e) {
+            System.out.println("step 3...");
+            System.out.println(e.getMessage());
+        }
+    }
 }
