@@ -7,11 +7,12 @@ import java.util.List;
  * Title:
  * Description:
  * Copyright:Copyright 2016 HtDataCloud
- * Author:裴健(peij@htdatacloud.com)
+ * Author:裴健(peij@htdatacloud.c)
  * Date:17/2/27-027
  * History:
  * his1:
  */
+
 public class UpdateList {
     public static void main(String[] args) {
         List<String> list = new ArrayList<>();
@@ -25,4 +26,5 @@ public class UpdateList {
         }
         System.out.println(list);
     }
+
 }
