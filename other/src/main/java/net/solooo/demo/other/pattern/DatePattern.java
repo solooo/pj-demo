@@ -20,11 +20,10 @@ public class DatePattern {
         String d1 = "2017-01-01-MAXVALUE";
         String d2 = "2016-01-01-2017-01-01";
         String d3 = "MINVALUE-2016-01-01";
-        Matcher matcher = p.matcher(d3);
+        Matcher matcher = p.matcher(d1);
         if (matcher.find()) {
-            for (int i = 0; i < matcher.groupCount(); i++) {
-                System.out.println(matcher.group(i));
-            }
+            System.out.println(matcher.group());
+
         }
     }
 }
