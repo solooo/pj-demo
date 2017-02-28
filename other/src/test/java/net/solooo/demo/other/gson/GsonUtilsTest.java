@@ -1,6 +1,6 @@
 package net.solooo.demo.other.gson;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 
 /**
@@ -21,7 +21,7 @@ public class GsonUtilsTest {
     @Test
     public void jsonToObject() {
         String msg = "{\"command\":\"\",\"content\":\"{\\\"type\\\":\\\"DOCKER\\\",\\\"docker\\\":{\\\"image\\\":\\\"tomcat\\\",\\\"forcePullImage\\\":false,\\\"privileged\\\":false}}\"}";
-        TopicMessageObject topicMessageObject = new Gson().fromJson(msg, TopicMessageObject.class);
+        TopicMessageObject topicMessageObject = JSON.parseObject(msg, TopicMessageObject.class);
         System.out.println(topicMessageObject.getContent());
     }
 
