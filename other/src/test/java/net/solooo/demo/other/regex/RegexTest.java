@@ -7,6 +7,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.util.TablesNamesFinder;
 import org.junit.Test;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -77,5 +78,10 @@ public class RegexTest {
         }
         System.out.println(sb.toString());
 
+    }
+
+    @Test
+    public void messageFormat() {
+        System.out.println(MessageFormat.format("select count(1) from ({0})", "select * from pj"));
     }
 }
