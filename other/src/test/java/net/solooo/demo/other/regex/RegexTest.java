@@ -101,7 +101,7 @@ public class RegexTest {
                 "\tdbms_output.put_line('action faild');\n" +
                 "\tEND;";
         String sql2 = "use    ht_test  ;select * from pj;select * from tt";
-        String sql3 = "CREATE OR REPLACE PACKAGE BODY testpackage12 \n" +
+        String sql3 = "use ht_test; CREATE OR REPLACE PACKAGE BODY testpackage12 \n" +
                 "\tIS\n" +
                 "\tv_record_type record_type; \n" +
                 "\tsqlcur cur; \n" +
@@ -127,7 +127,8 @@ public class RegexTest {
         Pattern setPattern = Pattern.compile("^set (.*)");
         Pattern selectPattern = Pattern.compile("^select (.*)");
 
-        List<Object> sqlList = new ArrayList<>();
+        List<String> sqlList = new ArrayList<>();
+        List<SearchBean> searchList = new ArrayList<>();
         String useStatement;
         String execSql = "";
         String[] sqls = sql3.split(";");
@@ -144,7 +145,7 @@ public class RegexTest {
                 sqlList.add(setMatcher.group());
             } else if (selectMatcher.find()) { // select 查询语句
                 SearchBean searchBean = new SearchBean(databaseName, selectMatcher.group(), start, pageSize);
-                sqlList.add(searchBean);
+                searchList.add(searchBean);
             } else { // create 创建语句
                 execSql += str + "; ";
             }
@@ -160,6 +161,33 @@ public class RegexTest {
                 System.out.println("countSql: "+ ((SearchBean) obj).getCountSql());
                 System.out.println("-----------------------------");
             }
+        }
+    }
+
+    private class ExecBean {
+        private List<String> sql;
+
+        private List<SearchBean> searchBeens;
+
+        public ExecBean(List<String> sql, List<SearchBean> searchBeens) {
+            this.sql = sql;
+            this.searchBeens = searchBeens;
+        }
+
+        public List<String> getSql() {
+            return sql;
+        }
+
+        public void setSql(List<String> sql) {
+            this.sql = sql;
+        }
+
+        public List<SearchBean> getSearchBeens() {
+            return searchBeens;
+        }
+
+        public void setSearchBeens(List<SearchBean> searchBeens) {
+            this.searchBeens = searchBeens;
         }
     }
 
