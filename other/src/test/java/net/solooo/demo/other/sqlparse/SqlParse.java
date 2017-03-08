@@ -129,27 +129,13 @@ public class SqlParse {
 
         List<String> sqlList = new ArrayList<>();
         List<SearchBean> searchList = new ArrayList<>();
-        String useStatement;
         String execSql = "";
-        String[] sqls = sql3.split(";");
-        for (String s : sqls) {
-            String str = s.replaceAll("\\s+", " ").trim();
-            Matcher useMatcher = useDbPattern.matcher(str);
-            Matcher setMatcher = setPattern.matcher(str);
-            Matcher selectMatcher = selectPattern.matcher(str);
+        String sqls = sql3.replaceAll("\\s+", " ").trim();
 
-            if (useMatcher.find()) { // use 语句处理
-                useStatement = useMatcher.group();
-                sqlList.add(useStatement);
-            } else if (setMatcher.find()) { // set 属性设置处理
-                sqlList.add(setMatcher.group());
-            } else if (selectMatcher.find()) { // select 查询语句
-                SearchBean searchBean = new SearchBean(databaseName, selectMatcher.group(), start, pageSize);
-                searchList.add(searchBean);
-            } else { // create 创建语句
-                execSql += str + "; ";
-            }
-        }
+
+
+
+
         sqlList.add(execSql);
 
         for (Object obj : sqlList) {
@@ -163,6 +149,231 @@ public class SqlParse {
             }
         }
     }
+
+    @Test
+    public void parserTest() {
+        String sql = "   use    ht_test  ; set transaction.type=inceptor; set plsqlUseSlash true;\n " +
+                "create or replace procedure example_proc()\n" +
+                "\tis\n" +
+                "\tdeclare\n" +
+                "\tcnt int:=0;\n" +
+                "\tBEGIN\n" +
+                "\tbegin transaction;\n" +
+                "\tupdate kx.cbcbcbc set value='gaojianxun' where key=1;\n" +
+                "\tcommit;\n" +
+                "\tbegin transaction;\n" +
+                "\tupdate kx.cbcbcbc set value='gaojianxun1' where key=1;\n" +
+                "\tcommit;\n" +
+                "\tEXCEPTION\n" +
+                "\tWHEN others THEN\n" +
+                "\trollback;\n" +
+                "\tdbms_output.put_line('action faild');\n" +
+                "\tEND;";
+
+        String sql3 = "use ht_test; CREATE OR REPLACE PACKAGE BODY testpackage12 \n" +
+                "\tIS\n" +
+                "\tv_record_type record_type; \n" +
+                "\tsqlcur cur; \n" +
+                "\tPROCEDURE testprocedure() IS \n" +
+                "\tBEGIN\n" +
+                "\t\tOPEN sqlcur FOR\n" +
+                "\t\tSELECT key,value\n" +
+                "\t\tFROM cbcbcbc\n" +
+                "\t\tWHERE key=1; \n" +
+                "\t\tLOOP\n" +
+                "\t\tFETCH sqlcur INTO v_record_type; \n" +
+                "\t\tEXIT WHEN sqlcur%notfound ; \n" +
+                "\t\tdbms_output.put_line(v_record_type.key||' '||v_record_type.value); \n" +
+                "\t\tEND LOOP;\n" +
+                "\t\tCLOSE sqlcur; \n" +
+                "\tEND;\n" +
+                "\tEND;";
+        this.parser(sql);
+    }
+
+    Pattern useDbPattern = Pattern.compile("^use (.*)");
+    Pattern setPattern = Pattern.compile("^set (.*)");
+    Pattern selectPattern = Pattern.compile("^select (.*)");
+
+    private void parser(String str) {
+
+        String[] strs = str.replaceAll("\\s+", " ").trim().split("\\s+");
+
+        for (int i = 0; i < strs.length; i++) {
+
+            System.out.println(strs[i]);
+
+        }
+
+        str = str.replaceAll("\\s+", " ").trim();
+        Matcher useMatcher = useDbPattern.matcher(str);
+        Matcher setMatch = setPattern.matcher(str);
+        if (useMatcher.find()) {
+            int i = str.indexOf(";");
+            System.out.println(str.substring(0, i));
+            str = str.substring(i + 1, str.length()).trim();
+        } else if (setMatch.find()) {
+            int i = str.indexOf(";");
+            System.out.println(str.substring(0, i));
+            str = str.substring(i + 1, str.length()).trim();
+        }
+
+
+
+    }
+
+    Pattern pattern = Pattern.compile("[^A-Za-z]");
+    @Test
+    public void iterStr() throws Exception {
+
+        String str1 = "   use    ht_test  ; set transaction.type=inceptor; set plsqlUseSlash true;\n " +
+                "create or replace procedure example_proc()\n" +
+                "\tis\n" +
+                "\tdeclare\n" +
+                "\tcnt int:=0;\n" +
+                "\tBEGIN\n" +
+                "\tbegin transaction;\n" +
+                "\tupdate kx.cbcbcbc set value='gaojianxun' where key=1;\n" +
+                "\tcommit;\n" +
+                "\tbegin transaction;\n" +
+                "\tupdate kx.cbcbcbc set value='gaojianxun1' where key=1;\n" +
+                "\tcommit;\n" +
+                "\tEXCEPTION\n" +
+                "\tWHEN others THEN\n" +
+                "\trollback;\n" +
+                "\tdbms_output.put_line('action faild');\n" +
+                "\tEND;";
+
+        String str2 = "CREATE OR REPLACE PACKAGE BODY testpackage12 \n" +
+                "\tIS\n" +
+                "\tv_record_type record_type; \n" +
+                "\tsqlcur cur; \n" +
+                "\tPROCEDURE testprocedure() IS \n" +
+                "\tBEGIN\n" +
+                "\t\tOPEN sqlcur FOR\n" +
+                "\t\tSELECT key,value\n" +
+                "\t\tFROM cbcbcbc\n" +
+                "\t\tWHERE key=1; \n" +
+                "\t\tLOOP\n" +
+                "\t\tFETCH sqlcur INTO v_record_type; \n" +
+                "\t\tEXIT WHEN sqlcur%notfound ; \n" +
+                "\t\tdbms_output.put_line(v_record_type.key||' '||v_record_type.value); \n" +
+                "\t\tEND LOOP;\n" +
+                "\t\tCLOSE sqlcur; \n" +
+                "\tEND;\n" +
+                "\tEND;\n";
+
+        String str3 = "\tCREATE OR REPLACE PACKAGE testpackage12 \n" +
+                "IS\n" +
+                "TYPE record_type IS RECORD(key int,value string); \n" +
+                "TYPE cur IS REF CURSOR; \n" +
+                "PROCEDURE testprocedure(); \n" +
+                "END;\n";
+
+
+        String str4 = "\n use ht_test;select * from ht_test.tt;";
+
+        String str5 = "\nbegin\n" +
+                "\t\texample_proc()\n" +
+                "    end;";
+
+        String str6 = "\n create table tt(id int)";
+
+        String str = str1 + str2 + str3 + str4 + str5 + str6;
+        parserSql(str);
+    }
+
+    List<String> sqlKeys = new ArrayList<>();
+
+
+
+    private void parserSql(String str) throws Exception {
+
+        sqlKeys.add("create");
+        sqlKeys.add("select");
+        sqlKeys.add("alter");
+        sqlKeys.add("insert");
+        sqlKeys.add("update");
+        sqlKeys.add("drop");
+        sqlKeys.add("merge");
+        sqlKeys.add("truncate");
+        sqlKeys.add("use");
+        sqlKeys.add("set");
+        sqlKeys.add("begin");
+
+        String sql = str.toLowerCase().replaceAll("\\s+", " ").replaceAll(";", " ; ").trim();
+        String[] strs = sql.split("\\s+");
+
+        StringBuilder sb = new StringBuilder();
+        List<String> sqlList = new ArrayList<>();
+        String startStr = null, endStr = null, preStr = null;
+        int stack = 0;
+        for (int i = 0; i < strs.length; i++) {
+            boolean clearPreStr = false; // 是否将 preStr 设为null
+            String s = strs[i];
+            if (sb.length() == 0 && pattern.matcher(s).find()) {
+                continue;
+            }
+            sb.append(s).append(" ");
+
+            if (startStr == null && !sqlKeys.contains(s)) {
+                int len = strs.length;
+                String errorSql = "";
+                while (++i < len) {
+                    errorSql += strs[i];
+                }
+                throw new Exception("不支持sql语法" + errorSql);
+            }
+
+            if (startStr == null && sqlKeys.contains(s)) {
+                startStr = s;
+                endStr = ";";
+                stack++;
+            } else if ("create".equals(startStr) && ("procedure".equals(s) || "package".equals(s)) ) {
+                // 创建存储过程或包时，结束符以"end"终止
+                String createStatement = sb.toString().trim();
+                if (("create or replace " + s).equals(createStatement)
+                        || ("create " + s).equals(createStatement)) {
+                    endStr = "end";
+                    if ("procedure".equals(s)) {
+                        stack--;
+                    }
+                }
+
+            } else if (s.equals("begin") || (!"end".equals(preStr) && "loop".equals(s))) {
+                // begin/loop 关键字结束符都为 end, 所以需要+1
+                stack++;
+            } else if ("transaction".equals(s) && "begin".equals(preStr)) {
+                stack--;
+            } else if (s.equals(endStr) || i == strs.length - 1) {
+                stack--;
+                if (stack == 0) {
+                    startStr = null;
+                    clearPreStr = true;
+                    if (!";".equals(endStr)) {
+                        sb.append(";");
+                    }
+                    sqlList.add(sb.toString());
+                    sb.setLength(0);
+                }
+            }
+            // 设置上一个关键字内容
+            if (clearPreStr) {
+                preStr = null;
+            } else {
+                preStr = s;
+            }
+        }
+
+        for (String s : sqlList) {
+            System.out.println(s);
+        }
+
+    }
+
+
+
+
 
     private class ExecBean {
         private List<String> sql;

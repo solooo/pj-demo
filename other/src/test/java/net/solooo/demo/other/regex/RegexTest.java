@@ -1,15 +1,8 @@
 package net.solooo.demo.other.regex;
 
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.util.TablesNamesFinder;
 import org.junit.Test;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,5 +36,9 @@ public class RegexTest {
     @Test
     public void messageFormat() {
         System.out.println(MessageFormat.format("select count(1) from ({0})", "select * from pj"));
+    }
+
+    public void search() {
+        Pattern p = Pattern.compile("use|");
     }
 }
