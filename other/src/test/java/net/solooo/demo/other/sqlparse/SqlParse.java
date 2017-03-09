@@ -279,8 +279,12 @@ public class SqlParse {
 
         String str6 = "\n create table tt(id int)";
 
+        String str7 = "begin\n" +
+                "testLast.testprocedure1();\n" +
+                "end;";
+
         String str = str1 + str2 + str3 + str4 + str5 + str6;
-        parserSql(str);
+        parserSql(str7);
     }
 
     List<String> sqlKeys = new ArrayList<>();
@@ -327,7 +331,7 @@ public class SqlParse {
 
             if (startStr == null && sqlKeys.contains(s)) {
                 startStr = s;
-                endStr = ";";
+                endStr = "begin".equals(s) ? "end" : ";"; // begin开关语句以end结尾
                 stack++;
             } else if ("create".equals(startStr) && ("procedure".equals(s) || "package".equals(s)) ) {
                 // 创建存储过程或包时，结束符以"end"终止
