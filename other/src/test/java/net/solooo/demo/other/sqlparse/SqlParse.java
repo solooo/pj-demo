@@ -321,7 +321,7 @@ public class SqlParse {
                 "CLOSE cur;\n" +
                 "END;";
 
-        String str = str1 + str2 + str3 + str4 + str5 + str6 + str8;
+        String str = str1 + str2 + str3 + str4 + str5 + str6 + str8 + str9;
         List<String> sqlList = parserSql(str);
         for (String s : sqlList) {
             System.out.println(s);
@@ -342,6 +342,7 @@ public class SqlParse {
         sqlKeys.add("use");
         sqlKeys.add("set");
         sqlKeys.add("begin");
+        sqlKeys.add("declare");
 
         String sql = str.toLowerCase().replaceAll("\\s+", " ").replaceAll(";", " ; ").trim();
         String[] strs = sql.split("\\s+");
@@ -369,7 +370,7 @@ public class SqlParse {
 
             if (startStr == null && sqlKeys.contains(s)) {
                 startStr = s;
-                endStr = "begin".equals(s) ? "end" : ";"; // begin开关语句以end结尾
+                endStr = "begin".equals(s) || "declare".equals(s) ? "end" : ";"; // begin开关语句以end结尾
                 stack++;
             } else if ("create".equals(startStr) && ("procedure".equals(s) || "package".equals(s)) ) {
                 // 创建存储过程或包时，结束符以"end"终止
