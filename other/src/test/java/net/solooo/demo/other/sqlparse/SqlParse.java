@@ -400,7 +400,7 @@ public class SqlParse {
                 if (stack == 0) {
                     startStr = null;
                     clearPreStr = true;
-                    if (!";".equals(endStr)) {
+                    if (!";".equals(endStr) && !";".equals(s)) {
                         sb.append(";");
                     }
                     sqlList.add(sb.toString());
