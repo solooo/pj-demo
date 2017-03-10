@@ -277,14 +277,52 @@ public class SqlParse {
                 "\t\texample_proc()\n" +
                 "    end;";
 
-        String str6 = "\n create table tt(id int)";
+        String str6 = "\n create table tt(id int);";
 
         String str7 = "begin\n" +
                 "testLast.testprocedure1();\n" +
                 "end;";
 
-        String str = str1 + str2 + str3 + str4 + str5 + str6;
-        List<String> sqlList = parserSql(str7);
+        String str8 = "\nCREATE OR REPLACE PACKAGE testLast2\n" +
+                "IS\n" +
+                "PROCEDURE testprocedure1(); \n" +
+                "PROCEDURE test_procedure1(test_name string);\n" +
+                "END;\n" +
+                "\n" +
+                "\n" +
+                "CREATE OR REPLACE PACKAGE BODY testLast2\n" +
+                "IS\n" +
+                "PROCEDURE  testprocedure1() is\n" +
+                "BEGIN\n" +
+                "dbms_output.put_line('是个好同学'); \n" +
+                "dbms_output.put_line('this is test'); \n" +
+                "END;\n" +
+                "\n" +
+                "PROCEDURE  test_procedure1(test_name string) is\n" +
+                "BEGIN\n" +
+                "dbms_output.put_line('test'); \n" +
+                "END;\n" +
+                "END;";
+
+        String str9 = "\nDECLARE\n" +
+                "CURSOR cur(tacc_num string) IS SELECT * FROM ppap WHERE key=tacc_num;\n" +
+                "transactions_type ppap%rowtype;\n" +
+                "BEGIN\n" +
+                "OPEN cur('1');\n" +
+                "LOOP\n" +
+                "FETCH cur INTO transactions_type;\n" +
+                "EXIT WHEN cur%NOTFOUND;\n" +
+                "DBMS_OUTPUT.PUT_LINE(transactions_type.key);\n" +
+                "END LOOP;\n" +
+                "CLOSE cur;\n" +
+                "EXCEPTION\n" +
+                "WHEN OTHERS THEN\n" +
+                "DBMS_OUTPUT.PUT_LINE('Something unexpected happened!!');\n" +
+                "CLOSE cur;\n" +
+                "END;";
+
+        String str = str1 + str2 + str3 + str4 + str5 + str6 + str8;
+        List<String> sqlList = parserSql(str);
         for (String s : sqlList) {
             System.out.println(s);
         }
@@ -326,7 +364,7 @@ public class SqlParse {
                 while (++i < len) {
                     errorSql += strs[i];
                 }
-                throw new Exception("不支持sql语法" + errorSql);
+                throw new Exception("语法错误" + errorSql);
             }
 
             if (startStr == null && sqlKeys.contains(s)) {

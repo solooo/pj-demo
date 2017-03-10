@@ -38,7 +38,14 @@ public class RegexTest {
         System.out.println(MessageFormat.format("select count(1) from ({0})", "select * from pj"));
     }
 
+    @Test
     public void search() {
-        Pattern p = Pattern.compile("use|");
+        String str = "SELECT * FROM (select * from tt where 1=1 and (2=2) and id=(select id from ttt where 1=1 and (aaa) ) limit 5) LIMIT 0,10";
+        String str2 = "SELECT * FROM tt LIMIT 0,10";
+        Pattern p = Pattern.compile("(?<=\\().*(?=\\))");
+        Matcher matcher = p.matcher(str2);
+        if (matcher.find()) {
+            System.out.println(matcher.group());
+        }
     }
 }
