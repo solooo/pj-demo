@@ -284,14 +284,14 @@ public class SqlParse {
                 "end;";
 
         String str = str1 + str2 + str3 + str4 + str5 + str6;
-        parserSql(str7);
+        List<String> sqlList = parserSql(str7);
+        for (String s : sqlList) {
+            System.out.println(s);
+        }
     }
 
     List<String> sqlKeys = new ArrayList<>();
-
-
-
-    private void parserSql(String str) throws Exception {
+    private List<String> parserSql(String str) throws Exception {
 
         sqlKeys.add("create");
         sqlKeys.add("select");
@@ -369,14 +369,23 @@ public class SqlParse {
             }
         }
 
-        for (String s : sqlList) {
-            System.out.println(s);
-        }
+        return sqlList;
 
     }
 
+    private List<ExecBean> packSql(List<String> sqlList) {
 
+        List<String> confSql = new ArrayList<>();
+        for (String sql : sqlList) {
+            if (sql.startsWith("use")) {
+                continue;
+            } else if (sql.startsWith("set")) {
+                confSql.add(sql);
+            }
+        }
 
+        return null;
+    }
 
 
     private class ExecBean {
