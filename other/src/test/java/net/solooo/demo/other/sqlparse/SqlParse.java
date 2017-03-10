@@ -329,6 +329,13 @@ public class SqlParse {
     }
 
     List<String> sqlKeys = new ArrayList<>();
+
+    /**
+     * 找到语句开始字符，根据语句类型判断结束字符串，遍历所有单词，直至找到结束点或语句结尾，以此分割sql
+     * @param str
+     * @return
+     * @throws Exception
+     */
     private List<String> parserSql(String str) throws Exception {
 
         sqlKeys.add("create");
