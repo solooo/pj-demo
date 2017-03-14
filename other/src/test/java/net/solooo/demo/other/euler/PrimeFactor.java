@@ -1,8 +1,9 @@
 package net.solooo.demo.other.euler;
 
 /**
- * Title:Euler 3
- * Description:
+ * Title:Euler 3<br/>
+ * Description:The prime factors of 13195 are 5, 7, 13 and 29.<br/>
+ * What is the largest prime factor of the number 600851475143 ?<br/>
  * Copyright:Copyright 2016 HtDataCloud
  * Author:裴健(peij@htdatacloud.com)
  * Date:17/3/14-014
