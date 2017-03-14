@@ -1,6 +1,4 @@
-package net.solooo.demo.other.other;
-
-import org.junit.Test;
+package net.solooo.demo.other.euler;
 
 /**
  * Title:Euler 3
@@ -12,7 +10,7 @@ import org.junit.Test;
  * his1:
  */
 public class PrimeFactor {
-    private Long maxPrimeFactor(Long n) {
+    private static Long maxPrimeFactor(Long n) {
         if (n < 2) {
             return n;
         }
@@ -27,8 +25,7 @@ public class PrimeFactor {
         return i;
     }
 
-    @Test
-    public void maxPrimeFactorTest() {
+    public static void main(String[] args) {
         Long n = 6008514751430L;
         System.out.println(maxPrimeFactor(n));
     }
