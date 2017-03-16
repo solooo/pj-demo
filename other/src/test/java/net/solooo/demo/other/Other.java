@@ -30,4 +30,23 @@ public class Other {
                 StringUtils.isBlank(terminated) ? "','" : "'" + terminated + "'");
         System.out.println(terminatedStr);
     }
+
+    @Test
+    public void reverse() {
+        String str = "eric";
+        String[] split = str.split("");
+        String reverseStr = "";
+        for (int i = split.length - 1; i >= 0; i--) {
+            reverseStr += split[i];
+        }
+
+        System.out.println(reverseStr);
+    }
+
+    @Test
+    public void zz() {
+        float x = 1L, y = 2L, z = 3L;
+        y += z--/++x;
+        System.out.println(y);
+    }
 }

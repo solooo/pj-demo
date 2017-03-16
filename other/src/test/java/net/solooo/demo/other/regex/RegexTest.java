@@ -35,7 +35,7 @@ public class RegexTest {
 
     @Test
     public void messageFormat() {
-        System.out.println(MessageFormat.format("select count(1) from ({0})", "select * from pj"));
+        System.out.println(MessageFormat.format("{0}", 100000)); //  100,000
     }
 
     @Test
