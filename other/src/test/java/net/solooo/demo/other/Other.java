@@ -45,8 +45,6 @@ public class Other {
 
     @Test
     public void zz() {
-        float x = 1L, y = 2L, z = 3L;
-        y += z--/++x;
-        System.out.println(y);
+        System.out.println(Long.valueOf(1) == 1L);
     }
 }
