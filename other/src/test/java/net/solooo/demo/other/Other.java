@@ -45,6 +45,11 @@ public class Other {
 
     @Test
     public void zz() {
-        System.out.println(Long.valueOf(1) == 1L);
+        int a = 128;
+        int b = 128;
+        Integer ai = 128;
+        Integer bi = 128;
+        System.out.println(a == b);
+        System.out.println(Integer.toBinaryString(3000));
     }
 }
