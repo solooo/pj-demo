@@ -16,6 +16,11 @@ public class AppConfig {
         return name;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
     public void setName(String name) {
         this.name = name;
     }
