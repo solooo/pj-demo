@@ -1,6 +1,7 @@
 package net.solooo.demo.springboot.service;
 
-import org.springframework.beans.factory.annotation.Value;
+import net.solooo.demo.springboot.config.AppConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,10 +16,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class HelloService {
 
-    @Value("${app.name}")
-    private String appName;
+    @Autowired
+    private AppConfig config;
 
     public String getName() {
-        return appName;
+        return config.getName();
     }
 }
