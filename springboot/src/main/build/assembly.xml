@@ -1,28 +1,39 @@
 <assembly>
-    <id>springboot</id>
+    <id>package</id>
     <formats>
         <format>zip</format>
     </formats>
-    <dependencySets>
-        <dependencySet>
-            <useProjectArtifact>true</useProjectArtifact>
-            <outputDirectory>lib</outputDirectory>
-        </dependencySet>
-    </dependencySets>
+    <includeBaseDirectory>true</includeBaseDirectory>
     <fileSets>
         <fileSet>
+            <directory>bin</directory>
             <outputDirectory>/</outputDirectory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <outputDirectory>/</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>src/main/build/scripts</directory>
             <outputDirectory>/bin</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>/</outputDirectory>
             <includes>
-                <include>run.sh</include>
-                <include>run.bat</include>
+                <include>*.jar</include>
             </includes>
         </fileSet>
     </fileSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <scope>runtime</scope>
+            <!--             <unpack>false</unpack> -->
+            <excludes>
+                <!--                 <exclude>${project.name}-${project.version}</exclude> -->
+                <exclude>${groupId}:${artifactId}</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
 </assembly>
