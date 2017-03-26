@@ -61,7 +61,7 @@
     <build>
         <finalName>myboot-${project.version}</finalName>
         <plugins>
-            <!--
+            <!-- spring-boot打包插件，所有依赖打到同一个jar包下，最终只有一个jar包，较笨重
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -79,18 +79,15 @@
                 </executions>
             </plugin>
 -->
+            <!-- assembly 打包插件，依赖包放在lib中，可指定运行脚本，可压缩成一个压缩包文件
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
                     <archive>
-                        <!-- 添加index则不从mainfest中读取classpath，而是从Index.list中读取 -->
-                        <!--                         <index>true</index> -->
                         <manifest>
                             <mainClass>net.solooo.demo.springboot.App</mainClass>
-                            <!-- to create a class path to your dependecies you have to fill true
-                                in this field -->
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
@@ -122,6 +119,57 @@
                     </execution>
                 </executions>
             </plugin>
+        -->
+
+            <!-- 可自动生成运行脚本 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- 配置文件的目标目录 -->
+                    <configurationDirectory>conf</configurationDirectory>
+                    <!-- 从哪里拷贝配置文件 (默认src/main/config) -->
+                    <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>
+                    <!-- 拷贝配置文件到上面的目录中 -->
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                    <includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+                    <!-- lib目录中jar的存放规则，默认是${groupId}/${artifactId}的目录格式，flat表示直接把jar放到lib目录 -->
+                    <repositoryLayout>flat</repositoryLayout>
+                    <!-- 打包的jar，以及maven依赖的jar放到这个目录里面 -->
+                    <repositoryName>lib</repositoryName>
+                    <!-- 根目录 -->
+                    <assembleDirectory>
+                        ${project.build.directory}/${project.artifactId}-${project.version}
+                    </assembleDirectory>
+
+                    <binFileExtensions>
+                        <unix>.sh</unix>
+                        <windows>.bat</windows>
+                    </binFileExtensions>
+                    <platforms>
+                        <!-- 生成linux平台的执行脚本 -->
+                        <platform>unix</platform>
+                        <platform>windows</platform>
+                    </platforms>
+                    <programs>
+                        <program>
+                            <mainClass>net.solooo.demo.springboot.App</mainClass>
+                            <name>myboot</name>
+                        </program>
+                    </programs>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>
