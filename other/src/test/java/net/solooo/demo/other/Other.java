@@ -3,6 +3,7 @@ package net.solooo.demo.other;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
+import java.io.File;
 import java.text.MessageFormat;
 
 /**
@@ -51,5 +52,19 @@ public class Other {
         Integer bi = 128;
         System.out.println(a == b);
         System.out.println(Integer.toBinaryString(3000));
+    }
+
+    @Test
+    public void path() {
+        System.out.println(getClass().getResource("").getPath());
+        System.out.println(getClass().getResource(".").getPath());
+        System.out.println(getClass().getResource("/").getPath());
+
+        String path = getClass().getResource("/").getPath();
+        path = path.substring(0, path.length() - 1);
+        if ("\\".equals(File.separator)) {
+            path = path.substring(1, path.lastIndexOf("/") + 1);
+        }
+        System.out.println(path);
     }
 }
