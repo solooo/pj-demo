@@ -3,7 +3,6 @@ package net.solooo.demo.other;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
-import java.io.File;
 import java.text.MessageFormat;
 
 /**
@@ -62,9 +61,7 @@ public class Other {
 
         String path = getClass().getResource("/").getPath();
         path = path.substring(0, path.length() - 1);
-        if ("\\".equals(File.separator)) {
-            path = path.substring(1, path.lastIndexOf("/") + 1);
-        }
+        path = path.substring(0, path.lastIndexOf("/"));
         System.out.println(path);
     }
 }

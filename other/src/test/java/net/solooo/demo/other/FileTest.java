@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -25,6 +24,8 @@ public class FileTest {
     public void fileList() throws IOException {
         Path path = Paths.get("D:/backup/");
 
+        System.out.println("file size: " + Files.size(path));
+
         Map<Path, Long> files = new TreeMap<>();
         for (Path p : Files.newDirectoryStream(path)) {
             FileTime creationTime = Files.getLastModifiedTime(p);
@@ -34,11 +35,9 @@ public class FileTest {
 
         int count = files.size();
         if (count > 7) {
-            Iterator<Map.Entry<Path, Long>> iterator = files.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Path, Long> entry = iterator.next();
+            for (Map.Entry<Path, Long> entry : files.entrySet()) {
                 Long value = entry.getValue();
-                if (System.currentTimeMillis() - value > 7*24*60*60*1000) {
+                if (System.currentTimeMillis() - value > 7 * 24 * 60 * 60 * 1000) {
                     System.out.println("删除文件：" + entry.getKey().getFileName().toString());
                     Files.deleteIfExists(entry.getKey());
                     count--;
