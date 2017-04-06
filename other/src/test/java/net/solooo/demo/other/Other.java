@@ -1,7 +1,11 @@
 package net.solooo.demo.other;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.MessageFormat;
 
@@ -63,5 +67,14 @@ public class Other {
         path = path.substring(0, path.length() - 1);
         path = path.substring(0, path.lastIndexOf("/"));
         System.out.println(path);
+    }
+
+    @Test
+    public void httpRest() {
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate
+                .getForEntity("http://192.168.2.7:9200/pj.es1/_stats", String.class).getBody();
+        JSONObject jsonObject = JSON.parseObject(result);
+        System.out.println(JSONPath.eval(jsonObject, "$._all.total.store.size_in_bytes"));
     }
 }
