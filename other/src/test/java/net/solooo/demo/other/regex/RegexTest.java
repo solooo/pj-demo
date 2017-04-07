@@ -48,4 +48,17 @@ public class RegexTest {
             System.out.println(matcher.group());
         }
     }
+
+    public static boolean isRightCharactar(String str) {
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]+$");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    @Test
+    public void check(){
+        System.out.println(isRightCharactar("测试001"));
+        System.out.println(isRightCharactar("ABCba测试001"));
+        System.out.println(isRightCharactar("1111"));
+    }
 }

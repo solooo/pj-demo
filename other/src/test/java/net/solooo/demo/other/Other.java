@@ -7,6 +7,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 
 /**
@@ -22,7 +27,7 @@ public class Other {
 
     @Test
     public void mathTest() {
-        double t1 = (double)91 / 100;
+        double t1 = (double) 91 / 100;
         System.out.println(t1 + " => " + Math.ceil(t1));
     }
 
@@ -73,8 +78,50 @@ public class Other {
     public void httpRest() {
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate
-                .getForEntity("http://192.168.2.7:9200/pj.es1/_stats", String.class).getBody();
+                .getForObject("http://192.168.2.7:9200/pj.es1/_stats", String.class);
         JSONObject jsonObject = JSON.parseObject(result);
         System.out.println(JSONPath.eval(jsonObject, "$._all.total.store.size_in_bytes"));
+    }
+
+    @Test
+    public void formatted() {
+        String s = String.format("/%s.%s/_stats", "pj", "es");
+        System.out.println(s);
+    }
+
+    @Test
+    public void hexString() {
+        String s = ",";
+        byte[] bytes = {'\u0001'}; //s.getBytes();
+        System.out.println(bytes.length);
+//        StringBuilder stringBuilder = new StringBuilder("");
+        char[] c = new char[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            c[i] = (char) bytes[i];
+            System.out.println(String.valueOf(bytes[i] == 1));
+
+//            String hex = Integer.toHexString(bytes[i] & 0xFF);
+//
+//            stringBuilder.append(hex);
+        }
+        System.out.println("\001".equals("\001"));
+        System.out.println(StringUtils.isBlank("\001"));
+    }
+
+    @Test
+    public void jdbcSearchByte() throws ClassNotFoundException, SQLException {
+        Class.forName("com.mysql.jdbc.Driver");
+        Connection connection = DriverManager
+                .getConnection("jdbc:mysql://192.168.2.6:3306/metastore_inceptorsql1", "hiveuser",
+                        "password");
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement
+                .executeQuery("select field_delim from tables_v where TABLE_NAME ='t1'");
+        while (resultSet.next()) {
+            System.out.println(resultSet.getString("field_delim").getBytes()[0]);
+        }
+        resultSet.close();
+        statement.close();
+        connection.close();
     }
 }
