@@ -50,7 +50,7 @@ public class RegexTest {
     }
 
     public static boolean isRightCharactar(String str) {
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_]+$");
+        Pattern pattern = Pattern.compile("^[a-z][a-z0-9_]+$");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
@@ -60,5 +60,9 @@ public class RegexTest {
         System.out.println(isRightCharactar("测试001"));
         System.out.println(isRightCharactar("ABCba测试001"));
         System.out.println(isRightCharactar("1111"));
+        System.out.println(isRightCharactar("abc"));
+        System.out.println(isRightCharactar("abcAbc"));
+        System.out.println(isRightCharactar("abcAbc001"));
+        System.out.println(isRightCharactar("abc001_"));
     }
 }
