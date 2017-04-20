@@ -17,7 +17,7 @@ public class RedisTest {
 
     @Before
     public void init() {
-        jedis = new Jedis("192.168.1.48", 6379);
+        jedis = new Jedis("192.168.1.6", 6379);
         jedis.auth("123456");
     }
 

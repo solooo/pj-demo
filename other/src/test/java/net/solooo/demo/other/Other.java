@@ -124,4 +124,14 @@ public class Other {
         statement.close();
         connection.close();
     }
+
+
+    @Test
+    public void replaceTest() {
+        String str = "${123} + ${123} - 2";
+        String id = "123";
+        String username = str.replace("${123}", "username");
+        System.out.println(username);
+
+    }
 }
