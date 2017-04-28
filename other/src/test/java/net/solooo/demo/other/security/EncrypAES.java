@@ -83,7 +83,7 @@ public class EncrypAES {
      */
     public static void main(String[] args) throws Exception {
         EncrypAES de1 = new EncrypAES();
-        String msg ="14-turtle_4.7-analysis_folder-name";
+        String msg ="14-turtle_4.7-analysis_folder-id";
         byte[] encontent = de1.Encrytor(msg);
         byte[] decontent = de1.Decryptor(encontent);
         String encode = new BASE64Encoder().encode(encontent);

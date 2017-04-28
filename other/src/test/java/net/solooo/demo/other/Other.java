@@ -92,7 +92,7 @@ public class Other {
     @Test
     public void hexString() {
         String s = ",";
-        byte[] bytes = {'\u0001'}; //s.getBytes();
+        byte[] bytes = { '\u0001' }; //s.getBytes();
         System.out.println(bytes.length);
 //        StringBuilder stringBuilder = new StringBuilder("");
         char[] c = new char[bytes.length];
@@ -125,13 +125,32 @@ public class Other {
         connection.close();
     }
 
-
     @Test
-    public void replaceTest() {
+    public void replaceTest() throws InterruptedException {
         String str = "${123} + ${123} - 2";
         String id = "123";
         String username = str.replace("${123}", "username");
         System.out.println(username);
 
+        for (int i = 0; i < 5; i++) {
+            System.out.println("------------------------------------");
+            System.out.println("i = " + i);
+            System.out.println(finalTest(i));
+            Thread.sleep(100);
+        }
+    }
+
+    public boolean finalTest(Integer i) {
+        try {
+            if (i % 2 == 0) {
+                throw new Exception("test");
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            System.out.println("finally....");
+        }
     }
 }
