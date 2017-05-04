@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Title:
@@ -128,16 +130,12 @@ public class Other {
     @Test
     public void replaceTest() throws InterruptedException {
         String str = "${123} + ${123} - 2";
-        String id = "123";
+        String sql = "select {0} from {1} group by {0}";
+
         String username = str.replace("${123}", "username");
         System.out.println(username);
 
-        for (int i = 0; i < 5; i++) {
-            System.out.println("------------------------------------");
-            System.out.println("i = " + i);
-            System.out.println(finalTest(i));
-            Thread.sleep(100);
-        }
+        System.out.println(MessageFormat.format(sql, "name", "user"));
     }
 
     public boolean finalTest(Integer i) {
@@ -152,5 +150,14 @@ public class Other {
         } finally {
             System.out.println("finally....");
         }
+    }
+
+    @Test
+    public void collectionsTest(){
+        List<String> list = new ArrayList<>();
+        list.add("test");
+        list.add("hahah");
+        
+        System.out.println(list.isEmpty());
     }
 }
