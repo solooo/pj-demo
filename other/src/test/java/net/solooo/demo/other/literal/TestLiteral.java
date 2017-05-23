@@ -85,4 +85,17 @@ public class TestLiteral {
 
         return HdSerial; // 返回硬盘序列号
     }
+
+    public void base64Test() {
+        String cookie = "eyJhZG1pbiI6dHJ1ZSwiY2FuTG9jayI6ZmFsc2UsImNyZWF0ZVRpbWUiOjE0OTQzMDg2MzQwMDAs\n" +
+                "ImN1cnJlbnRMb2dpblRpbWUiOjE0OTU1MjMzODgwNDYsImVtYWlsIjoiaHRAaHRkYXRhY2xvdWQu\n" +
+                "Y29tIiwiaWQiOjEsImxvZ2luQ291bnQiOjE3NDgsIm1vbnRoTG9naW5Db3VudCI6MzQzLCJuYW1l\n" +
+                "Ijoi57O757uf566h55CG5ZGYIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJyZW1hcmsiOiLotoXnuqfn\n" +
+                "rqHnkIblkZjvvIzmraTotKbmiLfkuI3og73liKDpmaTvvIHkuI3og73kv67mlLnvvIEiLCJ1cGRh\n" +
+                "dGVUaW1lIjoxNDg5NzQzNjc5MDAwLCJ1cGRhdGVVc2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4i\n" +
+                "fQ==";
+
+    }
+
+
 }

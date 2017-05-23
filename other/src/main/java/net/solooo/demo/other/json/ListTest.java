@@ -1,4 +1,4 @@
-package net.solooo.demo.other.gson;
+package net.solooo.demo.other.json;
 
 import java.util.ArrayList;
 import java.util.List;

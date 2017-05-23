@@ -1,4 +1,4 @@
-package net.solooo.demo.other.gson;
+package net.solooo.demo.other.json;
 
 /**
  * Title:

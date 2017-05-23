@@ -1,4 +1,4 @@
-package net.solooo.demo.other.gson;
+package net.solooo.demo.other.json;
 
 /**
  * @Description 订阅消息对象
