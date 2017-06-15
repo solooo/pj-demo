@@ -1,6 +1,5 @@
 package net.solooo.demo.other.druid;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,7 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Description:
@@ -24,7 +25,7 @@ public class DruidTest {
     @Before
     public void setUp() throws Exception {
         Class.forName("org.apache.hive.jdbc.HiveDriver");
-        connection = DriverManager.getConnection("jdbc:hive2://192.168.2.7:10000/default", "hive", "123456");
+        connection = DriverManager.getConnection("jdbc:hive2://192.168.2.18:10000/default", "hive", "123456");
     }
 
     public void query(String sql, Helper helper) throws SQLException {
@@ -39,15 +40,6 @@ public class DruidTest {
         void process(ResultSet rs) throws SQLException;
     }
 
-    @Test
-    public void getConn() throws SQLException {
-        query("show databases", (rs) -> {
-            while(rs.next()){
-                System.out.println(rs.getString(1));
-            }
-        });
-    }
-
     /**
      * 普通查询
      * @throws SQLException
@@ -56,35 +48,67 @@ public class DruidTest {
     public void selectBase() throws SQLException {
         long t1 = System.currentTimeMillis();
         List<Object> result = new ArrayList<>();
-        query("select * from druid_table_1 limit 5", (rs) -> {
+        query("select * from druid_yeji_hadoop limit 5", (rs) -> {
             while(rs.next()){
                 result.add(rs.getString(1));
             }
         });
-        System.out.println("cost: " + (System.currentTimeMillis() - t1));
-        Assert.assertTrue(result.size() > 0);
+        System.out.println("selectBase() cost: " + (System.currentTimeMillis() - t1));
     }
 
     @Test
     public void selectCount() throws SQLException {
-        long t1 = System.currentTimeMillis();
+        // count(*) 无条件
         List<Object> result = new ArrayList<>();
-        query("select count(*) from druid_table_1 limit 5", (rs) -> {
+        long t1 = System.currentTimeMillis();
+        query("select count(*) from druid_yeji_hadoop limit 5", (rs) -> {
             while(rs.next()){
                 result.add(rs.getInt(1));
             }
         });
-        System.out.println("cost: " + (System.currentTimeMillis() - t1));
-        Assert.assertEquals(result.get(0), 39244);
-        result.clear();
+        System.out.println("count(*) result:" + result.get(0) + " \t\t cost: " + (System.currentTimeMillis() - t1));
 
-        long t2 = System.currentTimeMillis();
-        query("select count(1) from druid_table_1 limit 5", (rs) -> {
+        // count(*) 有条件
+        long t3 = System.currentTimeMillis();
+        query("select count(count) from druid_yeji_hadoop where `__time`>='2017-01-01 00:00:00'", (rs) -> {
             while(rs.next()){
                 result.add(rs.getInt(1));
             }
         });
-        System.out.println("cost: " + (System.currentTimeMillis() - t2));
-        Assert.assertEquals(result.get(0), 39244);
+        System.out.println("count(count) result: " + result.get(0) + " \t\t cost: " + (System.currentTimeMillis() - t3));
+
+    }
+
+    @Test
+    public void groupTest() throws SQLException {
+        // count(*) 无条件
+        List<Object> result = new ArrayList<>();
+        long t1 = System.currentTimeMillis();
+        query("select jidu, sum(yeji) from druid_yeji_hadoop where `__time`>'2017-01-01 00:00:00' group by jidu ", (rs) -> {
+            while(rs.next()){
+                Map<String, Object> map = new HashMap<>();
+                map.put(rs.getString(1), rs.getObject(2));
+                result.add(map);
+            }
+        });
+        System.out.println("groupTest() result:" + result + " \t\t cost: " + (System.currentTimeMillis() - t1));
+    }
+
+    @Test
+    public void unionTest() throws SQLException {
+        // count(*) 无条件
+        List<Object> result = new ArrayList<>();
+        long t1 = System.currentTimeMillis();
+        query("select * from druid_yeji_hadoop where `__time`='2017-01-01' " +
+                "union all select * from druid_yeji_hadoop where `__time`='2017-01-03'", (rs) -> {
+            while(rs.next()){
+                List<Object> rlist = new ArrayList<>();
+                for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                    rlist.add(rs.getObject(i));
+                }
+                result.add(rlist);
+            }
+        });
+        System.out.println("groupTest() result:" + result + " \t\t cost: " + (System.currentTimeMillis() - t1));
     }
 }

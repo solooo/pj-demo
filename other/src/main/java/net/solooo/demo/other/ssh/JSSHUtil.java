@@ -121,7 +121,7 @@ public class JSSHUtil {
      *
      * @throws JSchException
      */
-    public static String execCmd(Session session, String command) throws Exception {
+    public static String execCmd(Session session, byte[] command) throws Exception {
         Channel channel = null;
 
         BufferedReader reader = null;

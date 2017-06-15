@@ -15,13 +15,8 @@ public class JSSHUtilTest {
     @Test
     public void execCmd() throws Exception {
 
-        Long startTime = 1497097349L;
-        Long endTime = 1497097409L;
-        String start = "1497097349";
-        String end = "1497097409";
-        byte[] bytes = startTime.toString().getBytes();
-        byte[] bytes1 = start.trim().getBytes();
-        System.out.println(new String(bytes, "iso-8859-1"));
+        Long startTime;
+        Long endTime;
 
         long b = Calendar.getInstance().getTimeInMillis();
         endTime = b / 1000;
@@ -33,12 +28,21 @@ public class JSSHUtilTest {
         System.out.println(String.valueOf(endTime));
         String a = "rrdtool fetch /var/lib/ganglia/rrds/clusterHDC/__SummaryInfo__/cpu_num.rrd  AVERAGE  --start {0} --end {1}";
 
-        String format1 = MessageFormat.format(a,
-                new String(startTime.toString().getBytes(), "utf-8"),
-                new String(endTime.toString().getBytes(), "utf-8"));
+        StringBuilder sb = new StringBuilder();
+        sb.append("rrdtool fetch /var/lib/ganglia/rrds/clusterHDC/__SummaryInfo__/cpu_num.rrd  AVERAGE  --start ");
+        sb.append(startTime);
+        sb.append(" --end ");
+        sb.append(endTime);
 
+        String format1 = MessageFormat.format(a, startTime.toString(), endTime.toString()
+//                new String(startTime.toString().getBytes("iso8859-1")),
+//                new String(endTime.toString().getBytes("iso8859-1"))
+        );
+
+//        format1 = sb.toString();
+        System.out.println(format1);
         Session session = JSSHUtil.connect("192.168.1.6", "root", "123456");
-        String s = JSSHUtil.execCmd(session, format1);
+        String s = JSSHUtil.execCmd(session, format1.getBytes("utf-8"));
         System.out.println(s);
     }
 
