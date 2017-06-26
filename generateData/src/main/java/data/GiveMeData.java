@@ -54,6 +54,10 @@ public class GiveMeData {
         latch.await();
     }
 
+    private void generateDayData() {
+
+    }
+
     /**
      * 找区域
      * @return
