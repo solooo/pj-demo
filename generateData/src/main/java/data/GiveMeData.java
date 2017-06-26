@@ -19,9 +19,6 @@ import java.util.concurrent.CountDownLatch;
  */
 public class GiveMeData {
 
-    private int days = 3; // 生成数据天数
-    private int day_counts = 50 * 10000; // 每天生成的数据量
-
     CountDownLatch latch;
 
     /**
@@ -32,21 +29,27 @@ public class GiveMeData {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         List<DataBean> dataBeanList = new GiveMeData().getAreas();
-        String rootPath = "data";
-        if (args.length > 0) {
-            rootPath = args[0];
+        int days = 3; // 生成数据天数
+        int dayCounts = 50 * 10000; // 每天生成的数据量
+        if (args[0] != null && args[0].length() > 0) {
+            dayCounts = Integer.parseInt(args[0]);
         }
-        new GiveMeData().generateData(dataBeanList, rootPath);
+        if (args[1] != null && args[1].length() > 0) {
+            days = Integer.parseInt(args[1]);
+        }
+        System.out.println("此任务数据量：每天" + dayCounts + "条数据，共" + days + "天");
+        String rootPath = "data";
+        new GiveMeData().generateData(dayCounts, days, dataBeanList, rootPath);
         System.out.println("---------------------执行完成-----------------------");
     }
 
-    private void generateData(final List<DataBean> dataBeanList, final String rootPath)
+    private void generateData(Integer dayCounts, Integer days, List<DataBean> dataBeanList, String rootPath)
             throws InterruptedException {
 
         System.out.println(dataBeanList.size() + " 个城市");
         latch = new CountDownLatch(dataBeanList.size());
         for (DataBean dataBean : dataBeanList) {
-            new Thread(new GenerateData(days, rootPath, day_counts, dataBean, latch)).start();
+            new Thread(new GenerateData(days, rootPath, dayCounts, dataBean, latch)).start();
         }
         latch.await();
     }
