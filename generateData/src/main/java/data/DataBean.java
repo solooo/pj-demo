@@ -1,4 +1,4 @@
-package net.solooo.demo.other.data;
+package data;
 
 /**
  * Description:
