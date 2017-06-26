@@ -9,9 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Description:
@@ -25,7 +23,7 @@ public class DruidTest {
     @Before
     public void setUp() throws Exception {
         Class.forName("org.apache.hive.jdbc.HiveDriver");
-        connection = DriverManager.getConnection("jdbc:hive2://192.168.2.18:10000/default", "hive", "123456");
+        connection = DriverManager.getConnection("jdbc:hive2://192.168.2.18:10000/default", "", "");
     }
 
     public void query(String sql, Helper helper) throws SQLException {
@@ -84,11 +82,9 @@ public class DruidTest {
         // count(*) 无条件
         List<Object> result = new ArrayList<>();
         long t1 = System.currentTimeMillis();
-        query("select jidu, sum(yeji) from druid_yeji_hadoop where `__time`>'2017-01-01 00:00:00' group by jidu ", (rs) -> {
+        query("select f from (select yeji_.quyu f from `default`.druid_yeji_hadoop yeji_ where 1=1  limit 5000 ) t group by f", (rs) -> {
             while(rs.next()){
-                Map<String, Object> map = new HashMap<>();
-                map.put(rs.getString(1), rs.getObject(2));
-                result.add(map);
+                result.add(rs.getString(1));
             }
         });
         System.out.println("groupTest() result:" + result + " \t\t cost: " + (System.currentTimeMillis() - t1));
