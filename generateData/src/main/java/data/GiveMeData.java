@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,7 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -50,14 +51,14 @@ public class GiveMeData {
             rootPath = args[0];
         }
         new GiveMeData().generateData(dataBeanList, rootPath);
-        latch.await();
+//        latch.await();
         System.out.println("---------------------执行完成-----------------------");
     }
 
     private void generateData(final List<DataBean> dataBeanList, final String rootPath)
             throws InterruptedException {
 
-        // 写入日期
+        /*// 写入日期
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -101,9 +102,16 @@ public class GiveMeData {
                     }
                 }
             }).start();
+        }*/
+
+        Calendar cal = Calendar.getInstance();
+        for (int i = 0; i < days; i++) {
+            String date = sdf.format(cal.getTime());
+            System.out.println(date + " 数据生成...");
+            generDayData(cal.getTime(), dataBeanList, rootPath);
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+            System.out.println(date + " 数据生成完成");
         }
-
-
 
     }
 
@@ -114,7 +122,7 @@ public class GiveMeData {
      * @param dataBeanList
      * @param rootPath
      */
-    private static void generDayData(Date date, List<DataBean> dataBeanList, String rootPath) {
+    private void generDayData(Date date, List<DataBean> dataBeanList, String rootPath) {
         String fileName = sdf.format(date);
         Path path = Paths.get(rootPath + "/" + fileName + ".txt");
         Calendar cal = Calendar.getInstance();
@@ -122,16 +130,16 @@ public class GiveMeData {
         try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("utf-8"))) {
             for (int n = 0; n < counts; n++) {
                 for (DataBean dataBean : dataBeanList) {
-                    cal.set(Calendar.HOUR_OF_DAY, MyRandom.getRandomInt(8, 20));
-                    cal.set(Calendar.SECOND, MyRandom.getRandomInt(60));
+                    cal.set(Calendar.HOUR_OF_DAY, getRandomInt(8, 20));
+                    cal.set(Calendar.SECOND, getRandomInt(60));
 
                     dataBean.setOrderid(String.valueOf(UUID.randomUUID()).replace("-", ""));
-                    dataBean.setCreatetime(yyyyMMddHHmmss.format(date));
-                    dataBean.setChanpinliebie(products.get(MyRandom.getRandomInt(5)));
-                    dataBean.setYushufangshi(trans.get(MyRandom.getRandomInt(3)));
-                    dataBean.setDanjia(MyRandom.getFloat()); // 单价
-                    dataBean.setDingdanshuliang(MyRandom.getRandomInt(100));
-                    dataBean.setXiaoshoue(MyRandom.getDouble(dataBean.getDingdanshuliang(), dataBean.getDanjia()));
+                    dataBean.setCreatetime(yyyyMMddHHmmss.format(cal.getTime()));
+                    dataBean.setChanpinliebie(products.get(getRandomInt(5)));
+                    dataBean.setYushufangshi(trans.get(getRandomInt(3)));
+                    dataBean.setDanjia(getFloat()); // 单价
+                    dataBean.setDingdanshuliang(getRandomInt(100));
+                    dataBean.setXiaoshoue(getDouble(dataBean.getDingdanshuliang(), dataBean.getDanjia()));
                     writer.write(dataBean.toString() + "\n");
                 }
             }
@@ -139,6 +147,49 @@ public class GiveMeData {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 指定上限int
+     * @param round
+     * @return
+     */
+    public int getRandomInt(int round) {
+        return new Random().nextInt(round);
+    }
+
+    /**
+     * 指定范围Int
+     * @param min
+     * @param max
+     * @return
+     */
+    public int getRandomInt(int min, int max) {
+        return min + ((int) (new Random().nextFloat() * (max - min)));
+    }
+
+    /**
+     * 生成100以内float
+     * @return
+     */
+    public float getFloat() {
+        // 取值范围1000以内
+        float Max = 100, Min = 1.0f;
+        BigDecimal db = new BigDecimal(Math.random() * (Max - Min) + Min);
+        return db.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
+
+    /**
+     * 计算乘积
+     * @param counts
+     * @param price
+     * @return
+     */
+    public double getDouble(int counts, float price) {
+        BigDecimal pric = new BigDecimal(String.valueOf(price));
+        BigDecimal count = new BigDecimal(String.valueOf(counts));
+        double v = pric.multiply(count).setScale(2).doubleValue();
+        return v;
     }
 
     /**
