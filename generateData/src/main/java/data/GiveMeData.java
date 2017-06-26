@@ -7,7 +7,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,9 +19,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Description:
@@ -30,59 +30,108 @@ import java.util.UUID;
  * Date:2017/6/22
  */
 public class GiveMeData {
-    int days = 3; // 生成数据天数
-    int counts = 50 * 1; // 每个城市一天内生成的数据量
+    static int days = 3; // 生成数据天数
+    static int counts = 50 * 1; // 每个城市一天内生成的数据量
 
-    List<String> products = Arrays.asList("办公用品","家具","电子","服装","食品"); // 产品类别
-    List<String> trans = Arrays.asList("火车","大卡","空运"); // 运输方式
+    static List<String> products = Arrays.asList("办公用品","家具","电子","服装","食品"); // 产品类别
+    static List<String> trans = Arrays.asList("火车","大卡","空运"); // 运输方式
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat yyyyMMddHHmmss = new SimpleDateFormat("yyyyMMddHHmmss");
+    final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    static SimpleDateFormat yyyyMMddHHmmss = new SimpleDateFormat("yyyyMMddHHmmss");
 
-    public static void main(String[] args) throws IOException {
+    final LinkedBlockingQueue<Date> calQueue = new LinkedBlockingQueue<>(20); // 一次存储20天日期
+    static CountDownLatch latch = new CountDownLatch(5);
+    boolean over = false;
+
+    public static void main(String[] args) throws IOException, InterruptedException {
         List<DataBean> dataBeanList = new GiveMeData().getAreas();
         String rootPath = "E:/data";
         if (args.length > 0) {
             rootPath = args[0];
         }
         new GiveMeData().generateData(dataBeanList, rootPath);
+        latch.await();
         System.out.println("---------------------执行完成-----------------------");
     }
 
-    private void generateData(List<DataBean> dataBeanList, String rootPath) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeZone(TimeZone.getDefault());
+    private void generateData(final List<DataBean> dataBeanList, final String rootPath)
+            throws InterruptedException {
 
-        for (int i = 0; i < days; i++) {
-            generDayData(cal, dataBeanList, rootPath);
-            cal.add(Calendar.DAY_OF_MONTH, -1);
+        // 写入日期
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTimeZone(TimeZone.getDefault());
+                    for (int i = 0; i < days; i++) {
+                        cal.add(Calendar.DAY_OF_MONTH, -1);
+                        System.out.println(sdf.format(cal.getTime()));
+                        calQueue.put(cal.getTime());
+                    }
+                    over = true;
+                    latch.countDown();
+                    System.out.println(Thread.currentThread().getName() + "执行完成");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        Thread.sleep(1000);
+        // 取出日期生成数据
+        for (int i = 0; i < 4; i++) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        System.out.println(calQueue.size());
+                        if (calQueue.size() == 0 && over) {
+                            latch.countDown();
+                            System.out.println(Thread.currentThread().getName() + "执行完成");
+                        } else {
+                            Date cal = calQueue.take();
+                            String data = sdf.format(cal);
+                            System.out.println(Thread.currentThread().getName() + ": " + data + " 数据生成...");
+                            GiveMeData.generDayData(cal, dataBeanList, rootPath);
+                            System.out.println(Thread.currentThread().getName() + ": " + data + " 数据生成完成");
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
+
+
 
     }
 
+
     /**
      * 生成一天内的数据
-     * @param cal
+     * @param date
      * @param dataBeanList
      * @param rootPath
      */
-    private void generDayData(Calendar cal, List<DataBean> dataBeanList, String rootPath) {
-        String fileName = sdf.format(cal.getTime());
+    private static void generDayData(Date date, List<DataBean> dataBeanList, String rootPath) {
+        String fileName = sdf.format(date);
         Path path = Paths.get(rootPath + "/" + fileName + ".txt");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
         try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("utf-8"))) {
             for (int n = 0; n < counts; n++) {
                 for (DataBean dataBean : dataBeanList) {
-                    cal.set(Calendar.HOUR_OF_DAY, getRandomInt(8, 20));
-                    cal.set(Calendar.SECOND, getRandomInt(60));
-                    Date time = cal.getTime();
+                    cal.set(Calendar.HOUR_OF_DAY, MyRandom.getRandomInt(8, 20));
+                    cal.set(Calendar.SECOND, MyRandom.getRandomInt(60));
 
                     dataBean.setOrderid(String.valueOf(UUID.randomUUID()).replace("-", ""));
-                    dataBean.setCreatetime(yyyyMMddHHmmss.format(time));
-                    dataBean.setChanpinliebie(products.get(getRandomInt(5)));
-                    dataBean.setYushufangshi(trans.get(getRandomInt(3)));
-                    dataBean.setDanjia(getFloat()); // 单价
-                    dataBean.setDingdanshuliang(getRandomInt(100));
-                    dataBean.setXiaoshoue(getDouble(dataBean.getDingdanshuliang(), dataBean.getDanjia()));
+                    dataBean.setCreatetime(yyyyMMddHHmmss.format(date));
+                    dataBean.setChanpinliebie(products.get(MyRandom.getRandomInt(5)));
+                    dataBean.setYushufangshi(trans.get(MyRandom.getRandomInt(3)));
+                    dataBean.setDanjia(MyRandom.getFloat()); // 单价
+                    dataBean.setDingdanshuliang(MyRandom.getRandomInt(100));
+                    dataBean.setXiaoshoue(MyRandom.getDouble(dataBean.getDingdanshuliang(), dataBean.getDanjia()));
                     writer.write(dataBean.toString() + "\n");
                 }
             }
@@ -90,28 +139,6 @@ public class GiveMeData {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public int getRandomInt(int round) {
-        return new Random().nextInt(round);
-    }
-
-    public int getRandomInt(int min, int max) {
-        return min + ((int) (new Random().nextFloat() * (max - min)));
-    }
-
-    public float getFloat() {
-        // 取值范围1000以内
-        float Max = 100, Min = 1.0f;
-        BigDecimal db = new BigDecimal(Math.random() * (Max - Min) + Min);
-        return db.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
-    }
-
-    public double getDouble(int counts, float price) {
-        BigDecimal pric = new BigDecimal(String.valueOf(price));
-        BigDecimal count = new BigDecimal(String.valueOf(counts));
-        double v = pric.multiply(count).setScale(2).doubleValue();
-        return v;
     }
 
     /**
