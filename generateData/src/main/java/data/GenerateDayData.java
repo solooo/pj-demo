@@ -56,6 +56,9 @@ public class GenerateDayData implements Runnable {
         while (true) {
             try {
                 Date date = dateQueue.poll(5, TimeUnit.SECONDS);
+                if (date == null) {
+                    break;
+                }
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(date);
                 String name = sdf.format(cal.getTime());
@@ -67,6 +70,7 @@ public class GenerateDayData implements Runnable {
                 e.printStackTrace();
             }
         }
+        latch.countDown();
     }
 
     /**

@@ -55,6 +55,7 @@ public class GiveMeData {
     }
 
     private void generateDayData() {
+        // 写入LinkedBlockingQueue
 
     }
 
