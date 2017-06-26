@@ -20,6 +20,7 @@
         <module>other</module>
         <module>restful</module>
         <module>springboot</module>
+        <module>generateData</module>
     </modules>
 
     <dependencyManagement>
