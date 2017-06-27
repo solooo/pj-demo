@@ -6,11 +6,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Description:
@@ -27,19 +32,22 @@ public class GiveMeData {
      * @throws IOException
      * @throws InterruptedException
      */
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, ParseException {
         List<DataBean> dataBeanList = new GiveMeData().getAreas();
         int days = 3; // 生成数据天数
         int dayCounts = 50 * 10000; // 每天生成的数据量
-        if (args[0] != null && args[0].length() > 0) {
-            dayCounts = Integer.parseInt(args[0]);
-        }
-        if (args[1] != null && args[1].length() > 0) {
-            days = Integer.parseInt(args[1]);
+        if (args != null && args.length > 0) {
+            if (args[0] != null && args[0].length() > 0) {
+                dayCounts = Integer.parseInt(args[0]);
+            }
+            if (args[1] != null && args[1].length() > 0) {
+                days = Integer.parseInt(args[1]);
+            }
         }
         System.out.println("此任务数据量：每天" + dayCounts + "条数据，共" + days + "天");
         String rootPath = "data";
-        new GiveMeData().generateData(dayCounts, days, dataBeanList, rootPath);
+//        new GiveMeData().generateData(dayCounts, days, dataBeanList, rootPath);
+        new GiveMeData().generateDayData(dayCounts, days, dataBeanList, rootPath);
         System.out.println("---------------------执行完成-----------------------");
     }
 
@@ -54,8 +62,20 @@ public class GiveMeData {
         latch.await();
     }
 
-    private void generateDayData() {
+    private void generateDayData(Integer dayCounts, Integer days, List<DataBean> dataBeanList, String rootPath)
+            throws ParseException, InterruptedException {
         // 写入LinkedBlockingQueue
+        LinkedBlockingQueue<Date> dateQueue = new LinkedBlockingQueue<>();
+        String start = "20170531";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(sdf.parse(start));
+
+        for (Integer i = 0; i < days; i++) {
+            dateQueue.put(cal.getTime());
+            cal.add(Calendar.DAY_OF_MONTH, -1);
+        }
+
 
     }
 

@@ -32,7 +32,7 @@ public class GenerateData implements Runnable {
 
     private List<String> trans = Arrays.asList("火车","大卡","空运"); // 运输方式
 
-    final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    final static SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd");
 
     static SimpleDateFormat yyyyMMddHHmmss = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -56,7 +56,7 @@ public class GenerateData implements Runnable {
             String name = date + "-" + dataBean.getChengshi();
             System.out.println(name + " 数据生成...");
             generDayData(cal, dataBean, rootPath);
-            cal.add(Calendar.DAY_OF_MONTH, -1);
+            cal.add(Calendar.DAY_OF_YEAR, -1);
             System.out.println(name + " 数据生成完成");
         }
         latch.countDown();
