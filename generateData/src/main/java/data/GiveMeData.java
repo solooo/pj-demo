@@ -1,16 +1,16 @@
 package data;
 
 import com.alibaba.fastjson.JSON;
+import util.DateStyle;
+import util.DateUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class GiveMeData {
             }
         }
         System.out.println("此任务数据量：每天" + dayCounts + "条数据，共" + days + "天");
-        String rootPath = "data";
+        String rootPath = "E:/data";
 //        new GiveMeData().generateData(dayCounts, days, dataBeanList, rootPath);
         new GiveMeData().generateDayData(dayCounts, days, dataBeanList, rootPath);
         System.out.println("---------------------执行完成-----------------------");
@@ -65,18 +65,20 @@ public class GiveMeData {
     private void generateDayData(Integer dayCounts, Integer days, List<DataBean> dataBeanList, String rootPath)
             throws ParseException, InterruptedException {
         // 写入LinkedBlockingQueue
-        LinkedBlockingQueue<Date> dateQueue = new LinkedBlockingQueue<>();
-        String start = "20170531";
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        LinkedBlockingQueue<String> dateQueue = new LinkedBlockingQueue<>();
+        String start = "2017-05-31";
+
         Calendar cal = Calendar.getInstance();
-        cal.setTime(sdf.parse(start));
+        cal.setTime(DateUtil.StringToDate(start, DateStyle.YYYY_MM_DD));
 
         for (Integer i = 0; i < days; i++) {
-            dateQueue.put(cal.getTime());
+            dateQueue.put(DateUtil.DateToString(cal.getTime(), DateStyle.YYYY_MM_DD));
             cal.add(Calendar.DAY_OF_MONTH, -1);
         }
-        latch = new CountDownLatch(1);
-        new Thread(new GenerateDayData(dateQueue, rootPath, dayCounts, dataBeanList, latch));
+        latch = new CountDownLatch(3);
+        for (int i = 0; i < 3; i++) {
+            new Thread(new GenerateDayData(dateQueue, rootPath, dayCounts, dataBeanList, latch)).start();
+        }
         latch.await();
     }
 

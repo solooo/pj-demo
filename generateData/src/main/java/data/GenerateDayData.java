@@ -7,10 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -24,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * Date:2017/6/26
  */
 public class GenerateDayData implements Runnable {
-    LinkedBlockingQueue<Date> dateQueue = new LinkedBlockingQueue<>();
+    LinkedBlockingQueue<String> dateQueue = new LinkedBlockingQueue<>();
 
     private String rootPath;
 
@@ -34,15 +31,14 @@ public class GenerateDayData implements Runnable {
 
     private List<String> trans = Arrays.asList("火车","大卡","空运"); // 运输方式
 
-    final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-    static SimpleDateFormat yyyyMMddHHmmss = new SimpleDateFormat("yyyyMMddHHmmss");
-
     private List<DataBean> dataBeans;
 
     private CountDownLatch latch;
 
-    public GenerateDayData(LinkedBlockingQueue<Date> dateQueue, String rootPath, Integer counts,
+    public GenerateDayData() {
+    }
+
+    public GenerateDayData(LinkedBlockingQueue<String> dateQueue, String rootPath, Integer counts,
             List<DataBean> dataBeans, CountDownLatch latch) {
         this.dateQueue = dateQueue;
         this.rootPath = rootPath;
@@ -55,17 +51,13 @@ public class GenerateDayData implements Runnable {
     public void run() {
         while (true) {
             try {
-                Date date = dateQueue.poll(5, TimeUnit.SECONDS);
+                String date = dateQueue.poll(5, TimeUnit.SECONDS);
                 if (date == null) {
                     break;
                 }
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                String name = sdf.format(cal.getTime());
-                System.out.println(name + " 数据生成...");
-                generDayData(cal, dataBeans, rootPath);
-                cal.add(Calendar.DAY_OF_MONTH, -1);
-                System.out.println(name + " 数据生成完成");
+                System.out.println(date + " 数据生成...");
+                generDayData(date, dataBeans, rootPath);
+                System.out.println(date + " 数据生成完成");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -75,21 +67,24 @@ public class GenerateDayData implements Runnable {
 
     /**
      * 生成一天内的数据
-     * @param cal
+     * @param date
      * @param dataBeans
      * @param rootPath
      */
-    private void generDayData(Calendar cal, List<DataBean> dataBeans, String rootPath) {
-        String fileName = sdf.format(cal.getTime());
-        Path path = Paths.get(rootPath + "/" + fileName + ".txt");
+    private void generDayData(String date, List<DataBean> dataBeans, String rootPath) {
+        Path path = Paths.get(rootPath + "/" + date + ".txt");
         try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("utf-8"))) {
             for (int n = 0; n < counts; n++) {
                 for (DataBean dataBean : dataBeans) {
-                    cal.set(Calendar.HOUR_OF_DAY, getRandomInt(8, 20));
-                    cal.set(Calendar.SECOND, getRandomInt(60));
+                    int hour = getRandomInt(8,20);
+                    date += " " + (hour < 10 ? "0" + hour : hour);
+                    int min = getRandomInt(60);
+                    date += ":" + (min < 10 ? "0" + min : min);
+                    int sec = getRandomInt(60);
+                    date += ":" + (sec < 10 ? "0" + sec : sec);
 
                     dataBean.setOrderid(String.valueOf(UUID.randomUUID()).replace("-", ""));
-                    dataBean.setCreatetime(yyyyMMddHHmmss.format(cal.getTime()));
+                    dataBean.setCreatetime(date);
                     dataBean.setChanpinliebie(products.get(getRandomInt(5)));
                     dataBean.setYushufangshi(trans.get(getRandomInt(3)));
                     dataBean.setDanjia(getFloat()); // 单价
@@ -145,5 +140,12 @@ public class GenerateDayData implements Runnable {
         BigDecimal count = new BigDecimal(String.valueOf(counts));
         double v = pric.multiply(count).setScale(2).doubleValue();
         return v;
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 1000; i++) {
+            int randomInt = new GenerateDayData().getRandomInt(8, 20);
+            System.out.println(randomInt);
+        }
     }
 }
