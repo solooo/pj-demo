@@ -75,8 +75,9 @@ public class GiveMeData {
             dateQueue.put(cal.getTime());
             cal.add(Calendar.DAY_OF_MONTH, -1);
         }
-
-
+        latch = new CountDownLatch(1);
+        new Thread(new GenerateDayData(dateQueue, rootPath, dayCounts, dataBeanList, latch));
+        latch.await();
     }
 
     /**
