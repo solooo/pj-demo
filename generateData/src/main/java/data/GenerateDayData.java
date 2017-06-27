@@ -51,13 +51,13 @@ public class GenerateDayData implements Runnable {
     public void run() {
         while (true) {
             try {
-                String date = dateQueue.poll(5, TimeUnit.SECONDS);
-                if (date == null) {
+                if (dateQueue.isEmpty()) {
                     break;
                 }
-                System.out.println(date + " 数据生成...");
+                String date = dateQueue.poll(5, TimeUnit.SECONDS);
+                System.out.println(Thread.currentThread().getName() + ": " + date + " 数据生成...");
                 generDayData(date, dataBeans, rootPath);
-                System.out.println(date + " 数据生成完成");
+                System.out.println(Thread.currentThread().getName() + ": " + date + " 数据生成完成");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -76,15 +76,17 @@ public class GenerateDayData implements Runnable {
         try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("utf-8"))) {
             for (int n = 0; n < counts; n++) {
                 for (DataBean dataBean : dataBeans) {
+//                    System.out.println(Thread.currentThread().getName() + ": " + date);
+                    String today;
                     int hour = getRandomInt(8,20);
-                    date += " " + (hour < 10 ? "0" + hour : hour);
+                    today = date + " " + (hour < 10 ? "0" + hour : hour);
                     int min = getRandomInt(60);
-                    date += ":" + (min < 10 ? "0" + min : min);
+                    today = today + ":" + (min < 10 ? "0" + min : min);
                     int sec = getRandomInt(60);
-                    date += ":" + (sec < 10 ? "0" + sec : sec);
+                    today = today + ":" + (sec < 10 ? "0" + sec : sec);
 
                     dataBean.setOrderid(String.valueOf(UUID.randomUUID()).replace("-", ""));
-                    dataBean.setCreatetime(date);
+                    dataBean.setCreatetime(today);
                     dataBean.setChanpinliebie(products.get(getRandomInt(5)));
                     dataBean.setYushufangshi(trans.get(getRandomInt(3)));
                     dataBean.setDanjia(getFloat()); // 单价
