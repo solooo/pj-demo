@@ -80,7 +80,7 @@ public class GiveMeData {
             dateQueue.put(DateUtil.DateToString(cal.getTime(), DateStyle.YYYY_MM_DD));
             cal.add(Calendar.DAY_OF_MONTH, -1);
         }
-        latch = new CountDownLatch(3);
+        latch = new CountDownLatch(threadCounts);
         for (int i = 0; i < threadCounts; i++) {
             new Thread(new GenerateDayData(dateQueue, rootPath, dayCounts, dataBeanList, latch)).start();
         }
