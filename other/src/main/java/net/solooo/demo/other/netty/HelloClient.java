@@ -1,6 +1,8 @@
 package net.solooo.demo.other.netty;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -55,12 +57,28 @@ public class HelloClient {
                 if (line == null) {
                     continue;
                 }
-                channel.writeAndFlush(line + "\r\n");
+                ByteBuf response = HelloClient.response(line);
+                channel.writeAndFlush(response);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             group.shutdownGracefully();
         }
+    }
+
+    /**
+     * 响应
+     * @param msg
+     * @return
+     */
+    private static ByteBuf response(String msg) {
+        String delimiter = "\r\n\r\n";
+        byte[] body = msg.getBytes();
+        byte[] len = BytesUtil.intToByteBigEndian(body.length + 4);
+        byte[] deli = delimiter.getBytes();
+        byte[] respBytes = BytesUtil.concatenateByteArrays(len, body, deli);
+        ByteBuf byteBuf = Unpooled.copiedBuffer(respBytes);
+        return byteBuf;
     }
 }
