@@ -10,10 +10,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.Delimiters;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,10 +38,14 @@ public class HelloClient {
                 protected void initChannel(SocketChannel socketChannel) throws Exception {
                     ChannelPipeline pipeline = socketChannel.pipeline();
                     // 以("\n")为结尾分割的 解码器
-                    pipeline.addLast("framer",
-                            new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
-                    pipeline.addLast("decoder", new StringDecoder());
-                    pipeline.addLast("encoder", new StringEncoder());
+//                    pipeline.addLast("framer",
+//                            new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
+//                    pipeline.addLast("decoder", new StringDecoder());
+                    LengthFieldBasedFrameDecoder lengthFieldBasedFrameDecoder = new LengthFieldBasedFrameDecoder(
+                            Integer.MAX_VALUE, 0, 4, 0, 4);
+                    pipeline.addLast("decoder", lengthFieldBasedFrameDecoder);
+
+                    pipeline.addLast("String decoder", new StringDecoder());
                     // 自定义处理器
                     pipeline.addLast("handler", new HelloClientHandler());
                 }
