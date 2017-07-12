@@ -1,7 +1,15 @@
 package net.solooo.demo.other.netty;
 
+import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import net.solooo.demo.other.netty.msg.resp.DownloadMsg;
+import sun.misc.BASE64Decoder;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /**
  * Description:
@@ -11,7 +19,12 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class HelloClientHandler extends SimpleChannelInboundHandler<String> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
-        System.out.println("Server reply: " + s);
+        DownloadMsg downloadMsg = JSON.parseObject(s, DownloadMsg.class);
+        System.out.println(downloadMsg.getData().getLastPacket() + "\t" +downloadMsg.getData().getSeq());
+        String mediaData = downloadMsg.getData().getMediaData();
+        byte[] bytes = new BASE64Decoder().decodeBuffer(mediaData);
+        Path path = Paths.get("E:/test/111.HIK");
+        Files.write(path, bytes, StandardOpenOption.APPEND);
     }
 
     @Override

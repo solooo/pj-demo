@@ -24,7 +24,8 @@ import java.io.InputStreamReader;
  */
 public class HelloClient {
 
-    public static String host = "127.0.0.1";
+    public static String host = "192.168.1.184";
+//    public static String host = "127.0.0.1";
     public static int port = 7000;
 
     public static void main(String[] args) {
