@@ -6,8 +6,10 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import net.solooo.demo.other.netty.msg.resp.DownloadMsg;
 import sun.misc.BASE64Decoder;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 /**
  * Description:
@@ -20,11 +22,14 @@ public class HelloClientHandler extends SimpleChannelInboundHandler<String> {
         DownloadMsg downloadMsg = JSON.parseObject(s, DownloadMsg.class);
         String mediaData = downloadMsg.getData().getMediaData();
         byte[] bytes = new BASE64Decoder().decodeBuffer(mediaData);
-
-        String fileName = "E:/test/" + downloadMsg.getData().getRequestId();
-        try (BufferedOutputStream bo = new BufferedOutputStream(new FileOutputStream(fileName))) {
-            bo.write(bytes);
+        System.out.println(downloadMsg.getData().getSeq() + "\t" + downloadMsg.getData().getLastPacket());
+        String filePath = "E:/test/" + downloadMsg.getData().getRequestId();
+        Path path = Paths.get(filePath);
+        if (downloadMsg.getData().getSeq() == 1) {
+            Files.deleteIfExists(path);
+            Files.createFile(path);
         }
+        Files.write(path, bytes, StandardOpenOption.APPEND);
     }
 
     @Override
