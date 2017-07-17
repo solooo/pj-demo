@@ -97,5 +97,9 @@ public class TestLiteral {
 
     }
 
+    @Test
+    public void hashTest() {
+        System.out.println("peijian".hashCode());
+    }
 
 }
