@@ -30,6 +30,7 @@ public class HelloClientHandler extends SimpleChannelInboundHandler<String> {
             Files.createFile(path);
         }
         Files.write(path, bytes, StandardOpenOption.APPEND);
+
     }
 
     @Override

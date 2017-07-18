@@ -1,5 +1,6 @@
 package net.solooo.demo.other.netty;
 
+
 import java.io.ByteArrayOutputStream;
 
 /**
@@ -61,9 +62,13 @@ public class BytesUtil {
     }
 
     public static void main(String[] args) {
-//        byte[] bytes = BytesUtil.intToByteArray(10012121);
-//        System.out.println(bytes.length);
-
-        System.out.println("\r\n\r\n".getBytes().length);
+        byte[] bytes = new byte[3];
+        bytes[0] = 'c';
+        bytes[1] = '\0';
+        bytes[2] = 'c';
+        String s = new String(bytes);
+        System.out.println(s);
+        System.out.println(s.length());
+        System.out.println(Integer.toHexString(Integer.parseInt(s)));
     }
 }
