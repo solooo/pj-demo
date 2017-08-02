@@ -1,10 +1,7 @@
 package net.solooo.demo.other.netty;
 
-import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import net.solooo.demo.other.netty.msg.resp.DownloadMsg;
-import sun.misc.BASE64Decoder;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +16,13 @@ import java.nio.file.StandardOpenOption;
 public class HelloClientHandler extends SimpleChannelInboundHandler<String> {
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, String s) throws Exception {
+        System.out.println(s);
+        String filePath = "E:/test/search.json";
+        Path path = Paths.get(filePath);
+        Files.deleteIfExists(path);
+        Files.createFile(path);
+        Files.write(path, s.getBytes(), StandardOpenOption.APPEND);
+        /*
         DownloadMsg downloadMsg = JSON.parseObject(s, DownloadMsg.class);
         String mediaData = downloadMsg.getData().getMediaData();
         byte[] bytes = new BASE64Decoder().decodeBuffer(mediaData);
@@ -30,7 +34,7 @@ public class HelloClientHandler extends SimpleChannelInboundHandler<String> {
             Files.createFile(path);
         }
         Files.write(path, bytes, StandardOpenOption.APPEND);
-
+*/
     }
 
     @Override

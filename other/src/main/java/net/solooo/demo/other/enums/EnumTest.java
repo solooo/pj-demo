@@ -1,5 +1,6 @@
 package net.solooo.demo.other.enums;
 
+
 /**
  * Description:
  * Author:Eric
@@ -11,4 +12,5 @@ public class EnumTest {
         System.out.println(OperationEnum.valueOf("UPLOAD"));
         System.out.println(MsgTypeEnum.MediaCloudStore);
     }
+
 }
