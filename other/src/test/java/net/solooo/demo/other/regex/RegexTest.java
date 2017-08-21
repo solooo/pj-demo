@@ -65,4 +65,14 @@ public class RegexTest {
         System.out.println(isRightCharactar("abcAbc001"));
         System.out.println(isRightCharactar("abc001_"));
     }
+
+    @Test
+    public void columnType() {
+        String str = "array<String(10)>";
+        if (str.indexOf("<") > 0) {
+            System.out.println(str.substring(0, str.indexOf("<")));
+            System.out.println(str.substring(str.indexOf("<") + 1, str.length() - 1));
+        }
+
+    }
 }
