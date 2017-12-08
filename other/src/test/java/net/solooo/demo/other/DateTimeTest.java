@@ -2,13 +2,13 @@ package net.solooo.demo.other;
 
 import org.junit.Test;
 
-import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 
@@ -24,7 +24,8 @@ public class DateTimeTest {
         System.out.println("LocalDate.now() = " + LocalDate.now());
         System.out.println("LocalTime.now() = " + LocalTime.now());
         System.out.println("LocalDateTime.now() = " + LocalDateTime.now());
-        System.out.println("Instant.now() = " + Instant.now(Clock.systemDefaultZone()));
+        System.out.println("Instant.now() = " + Instant.ofEpochMilli(System.currentTimeMillis()));
+        System.out.println("ZonedDateTime.now() = " + ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
         System.out.println("Date parse 20170101 = " + LocalDate.parse("20170101", DateTimeFormatter.BASIC_ISO_DATE));
         System.out.println("Date parse 2017/01/01 = " + LocalDate.parse("2017/01/01", DateTimeFormatter.ofPattern("yyyy/MM/dd")));
