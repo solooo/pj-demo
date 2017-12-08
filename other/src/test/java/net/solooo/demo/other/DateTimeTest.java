@@ -20,7 +20,7 @@ import java.time.temporal.TemporalAdjusters;
 public class DateTimeTest {
 
     @Test
-    public void instatTest() {
+    public void instantTest() {
         System.out.println("LocalDate.now() = " + LocalDate.now());
         System.out.println("LocalTime.now() = " + LocalTime.now());
         System.out.println("LocalDateTime.now() = " + LocalDateTime.now());
