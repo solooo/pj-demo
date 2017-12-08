@@ -160,4 +160,12 @@ public class Other {
         
         System.out.println(list.isEmpty());
     }
+
+    @Test
+    public void subtest() {
+        String str = "data.txt";
+        System.out.println(str.substring(str.lastIndexOf(".") + 1));
+    }
+
+
 }
