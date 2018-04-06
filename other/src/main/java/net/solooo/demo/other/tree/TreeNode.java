@@ -10,7 +10,7 @@ import java.util.List;
  * Author:Eric
  * Date:2017/5/24
  */
-public abstract class TreeNode<T extends ITreeNode> {
+public abstract class TreeNode<T extends ITreeNode> implements ITreeNode<T> {
     //树节点ID
     @JSONField(ordinal = 1, serialize = false)
     private String nodeId;

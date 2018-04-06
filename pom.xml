@@ -21,6 +21,7 @@
         <module>restful</module>
         <module>springboot</module>
         <module>generateData</module>
+        <module>mongo</module>
     </modules>
 
     <dependencyManagement>
